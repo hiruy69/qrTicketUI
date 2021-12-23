@@ -6,9 +6,10 @@ import TableCell from '@mui/material/TableCell';
 import TableHead from '@mui/material/TableHead';
 import TableRow from '@mui/material/TableRow';
 import Title from './Title';
-import {Select,MenuItem,  Grid, TextField, Button} from '@mui/material';
+import {Select,MenuItem,  Grid, TextField, Button ,Modal, Box,Tooltip} from '@mui/material';
 
-
+import ContentCopyIcon from '@mui/icons-material/ContentCopy';
+import CopyToClipboard from 'react-copy-to-clipboard'
 // Generate Order Data
 function createData(id, date, name, shipTo, paymentMethod, amount) {
   return { id, date, name, shipTo, paymentMethod, amount };
@@ -59,9 +60,15 @@ function preventDefault(event) {
 
 export default function Orders() {
   const [price, setPrice] = React.useState(200)
-  const [name, setName] = React.useState(200)
-  const [phone, setPhone] = React.useState(200)
+  const [name, setName] = React.useState('')
+  const [phone, setPhone] = React.useState('')
+
+  const [modal, setModal] = React.useState(false)
   
+
+  const handleShow = (e)=>{
+    setModal(e=> !e )
+  }
 
   const handleChange = (e)=>{
     console.log(e.target)
@@ -74,11 +81,42 @@ export default function Orders() {
     }else if(e.target.name === 'name'){
       setName(e.target.value)
     }
-  }
+  } 
 
+  const style = {
+    position: 'absolute',
+    top: '50%',
+    left: '50%',
+    transform: 'translate(-50%, -50%)',
+    width: 400,
+    bgcolor: 'background.paper',
+    border: '2px solid #1976d2',
+    boxShadow: 24,
+    pt: 2,
+    px: 4,
+    pb: 3,
+  };
 
+///onClose={handleClose}
   return (
     <React.Fragment>
+      
+        <Button onClick={handleShow}>Open modal</Button>
+<Modal
+  open={modal}
+  aria-labelledby="parent-modal-title"
+  aria-describedby="parent-modal-description"
+>
+  <Box sx={{ ...style,width: 400 }} justifyContent='center'>
+    <h2 id="parent-modal-title">Text in a modal</h2>
+    <p id="parent-modal-description">
+      Duis mollis, est non commodo luctus, nisi erat porttitor ligula.
+    </p>
+    <Button variant="contained"  
+            color="primary" onClick={handleShow}>Close</Button>
+  </Box>
+</Modal>
+
        <Title>Book New Ticket</Title>
       <Grid alignItems="center" container spacing={2}>
           <Grid item xl={3} lg={3} md={3} sm={6} xs={12}>
@@ -124,6 +162,12 @@ export default function Orders() {
               <TableCell>{row.name}</TableCell>
               <TableCell>{row.shipTo}</TableCell>
               <TableCell>{row.paymentMethod}</TableCell>
+              <TableCell>
+              <CopyToClipboard text='lkjalkds-dfgdg' >
+                <Button ><ContentCopyIcon /></Button>
+              </CopyToClipboard>
+              </TableCell>
+              
             </TableRow>
           ))}
         </TableBody>

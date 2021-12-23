@@ -13,6 +13,8 @@ import Pricing from './Pricing';
 import ScanTicket from './ScanTicket'
 import Dashboard from './Dashboard'
 import {RequireAuth} from './RequireAuth'
+import { Navigate } from 'react-router-dom'
+import  Main  from "./Main";
 
 import {
   BrowserRouter as Router,
@@ -24,9 +26,10 @@ import {
 } from "react-router-dom";
 import { SickOutlined } from '@mui/icons-material';
 
+import  { Redirect } from 'react-router-dom'
 
 
-function App() { 
+function App(props) { 
   const [text, setText] = useState('');
   const [imageUrl, setImageUrl] = useState('');
   const [scanResultFile, setScanResultFile] = useState('');
@@ -34,7 +37,13 @@ function App() {
   //const classes = useStyles();
   const qrRef = useRef(null);
 
+  const rememberMe = localStorage.getItem('access_token')
+
   const [data, setData] = React.useState("Not Found");
+
+  //const navigate = useNavigate();
+
+  
   
 
   const handleScanResult = result => {
@@ -70,6 +79,13 @@ function App() {
   return (
     <Router>
       <Routes>
+      
+      <Route exact path="/" element={
+            <RequireAuth>
+               <Main />
+            </RequireAuth>
+          }>
+            </Route>
           <Route path="/scanticket" element={
             <RequireAuth>
                <ScanTicket />
@@ -94,11 +110,14 @@ function App() {
             <SignIn />
           }/>
         </Routes>
+        
+        {rememberMe && <Navigate to='/login'  /> }
     </Router>
   );
 }
 
-/* const useStyles = makeStyles((theme) => ({
+/*  {rememberMe ?  <Navigate to="/home" replace /> : <Navigate to="/home" replace />}
+const useStyles = makeStyles((theme) => ({
     conatiner: {
       marginTop: 10
     },
