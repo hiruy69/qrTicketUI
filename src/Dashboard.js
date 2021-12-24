@@ -18,6 +18,7 @@ import MenuIcon from '@mui/icons-material/Menu';
 import ChevronLeftIcon from '@mui/icons-material/ChevronLeft';
 import NotificationsIcon from '@mui/icons-material/Notifications';
 import { mainListItems } from './listItems';
+import LogoutIcon from '@mui/icons-material/Logout';
 //import Chart from './Chart';
 //import Deposits from './Deposits';
 import Orders from './Orders';
@@ -121,10 +122,11 @@ function DashboardContent() {
               Dashboard
             </Typography>
             <IconButton color="inherit">
-              <Badge badgeContent={4} color="secondary">
-                <NotificationsIcon />
+              <Badge color="secondary">
+                <LogoutIcon />
               </Badge>
             </IconButton>
+            
           </Toolbar>
         </AppBar>
         <Drawer variant="permanent" open={open}>

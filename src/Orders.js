@@ -10,6 +10,8 @@ import {Select,MenuItem,  Grid, TextField, Button ,Modal, Box,Tooltip} from '@mu
 
 import ContentCopyIcon from '@mui/icons-material/ContentCopy';
 import CopyToClipboard from 'react-copy-to-clipboard'
+import AlertDialogSlide from './AlertDialogSlide';
+import CustomizedSnackbars from './CustomizedSnackbars';
 // Generate Order Data
 function createData(id, date, name, shipTo, paymentMethod, amount) {
   return { id, date, name, shipTo, paymentMethod, amount };
@@ -59,19 +61,51 @@ function preventDefault(event) {
 }
 
 export default function Orders() {
+  const [open, setOpen] = React.useState(false);
+  const [title, setTitle] = React.useState('');
+  const [message, setMessage] = React.useState('');
+  const [severity, setSeverity] = React.useState('info');
+  const [openAlert, setOpenAlert] = React.useState(false)
+
   const [price, setPrice] = React.useState(200)
   const [name, setName] = React.useState('')
   const [phone, setPhone] = React.useState('')
 
-  const [modal, setModal] = React.useState(false)
-  
+  const handleClick = () => {
+    setOpen(true);
+  };
 
-  const handleShow = (e)=>{
-    setModal(e=> !e )
+  const handleClose = (event, reason) => {
+    if (reason === 'clickaway') {
+      return;
+    }
+
+    setOpen(false);
+  };
+
+
+  const handleClickOpenAlert = () => {
+    setOpenAlert(true);
+  };
+
+  const handleCloseAlert = () => {
+    setOpenAlert(false);
+  };
+
+  const copyLink = () => {
+    setSeverity('info');
+    setMessage('Link copy to clipboard')
+    setOpen(true);
+  };
+
+  const generateTikcet = (e)=>{
+      setTitle('New Ticket');
+      setMessage('Are you sure you want to create New Ticket?')
+      setOpenAlert(true);
   }
 
   const handleChange = (e)=>{
-    console.log(e.target)
+    //console.log(e.target)
     setPrice(e.target.value)
   }
 
@@ -83,39 +117,15 @@ export default function Orders() {
     }
   } 
 
-  const style = {
-    position: 'absolute',
-    top: '50%',
-    left: '50%',
-    transform: 'translate(-50%, -50%)',
-    width: 400,
-    bgcolor: 'background.paper',
-    border: '2px solid #1976d2',
-    boxShadow: 24,
-    pt: 2,
-    px: 4,
-    pb: 3,
-  };
 
-///onClose={handleClose}
   return (
     <React.Fragment>
       
-        <Button onClick={handleShow}>Open modal</Button>
-<Modal
-  open={modal}
-  aria-labelledby="parent-modal-title"
-  aria-describedby="parent-modal-description"
->
-  <Box sx={{ ...style,width: 400 }} justifyContent='center'>
-    <h2 id="parent-modal-title">Text in a modal</h2>
-    <p id="parent-modal-description">
-      Duis mollis, est non commodo luctus, nisi erat porttitor ligula.
-    </p>
-    <Button variant="contained"  
-            color="primary" onClick={handleShow}>Close</Button>
-  </Box>
-</Modal>
+      
+      <AlertDialogSlide handleClose={handleCloseAlert} open={openAlert} title={title} message={message}/>
+
+      <CustomizedSnackbars handleClose={handleClose} open={open} severity={severity} message={message} />
+        
 
        <Title>Book New Ticket</Title>
       <Grid alignItems="center" container spacing={2}>
@@ -141,7 +151,7 @@ export default function Orders() {
           </Grid>
           <Grid item xl={3} lg={3} md={3} sm={6} xs={12}>
           <Button  variant="contained" 
-            color="primary" onClick={()=>{console.log(phone,name)}} >Generate Ticket</Button>               
+            color="primary" onClick={generateTikcet} >Generate Ticket</Button>               
           </Grid>
       </Grid>
       
@@ -153,18 +163,19 @@ export default function Orders() {
             <TableCell>Name</TableCell>
             <TableCell>Price</TableCell>
             <TableCell>Status</TableCell>
+            <TableCell>Link</TableCell>
           </TableRow>
         </TableHead>
         <TableBody>
-          {rows.map((row) => (
+          {rows.map((row,id) => (
             <TableRow key={row.id}>
               <TableCell>{row.date}</TableCell>
               <TableCell>{row.name}</TableCell>
               <TableCell>{row.shipTo}</TableCell>
               <TableCell>{row.paymentMethod}</TableCell>
               <TableCell>
-              <CopyToClipboard text='lkjalkds-dfgdg' >
-                <Button ><ContentCopyIcon /></Button>
+              <CopyToClipboard text={`https://firebase.google.com/products/cloud-messaging/${id}`} >
+                <Button onClick={copyLink}><ContentCopyIcon /></Button>
               </CopyToClipboard>
               </TableCell>
               
@@ -178,3 +189,44 @@ export default function Orders() {
     </React.Fragment>
   );
 }
+
+
+/**
+ *   const style = {
+    position: 'absolute',
+    top: '50%',
+    left: '50%',
+    transform: 'translate(-50%, -50%)',
+    width: 400,
+    bgcolor: 'background.paper',
+    border: '2px solid #1976d2',
+    boxShadow: 24,
+    pt: 2,
+    px: 4,
+    pb: 3,
+  };
+
+///onClose={handleClose}
+ * const [modal, setModal] = React.useState(false)
+  
+
+  const handleShow = (e)=>{
+    setModal(e=> !e )
+  }
+ * <Button onClick={handleShow}>Open modal</Button>
+ * 
+ *       <Modal
+        open={modal}
+        aria-labelledby="parent-modal-title"
+        aria-describedby="parent-modal-description"
+      >
+  <Box sx={{ ...style,width: 400 }} justifyContent='center'>
+    <h2 id="parent-modal-title">Text in a modal</h2>
+    <p id="parent-modal-description">
+      Duis mollis, est non commodo luctus, nisi erat porttitor ligula.
+    </p>
+    <Button variant="contained"  
+            color="primary" onClick={handleShow}>Close</Button>
+  </Box>
+</Modal>
+ */
