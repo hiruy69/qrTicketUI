@@ -71,9 +71,14 @@ export default function Orders() {
   const [name, setName] = React.useState('')
   const [phone, setPhone] = React.useState('')
 
-  const handleClick = () => {
+/*   const handleClick = () => {
     setOpen(true);
   };
+
+  const handleClickOpenAlert = () => {
+    setOpenAlert(true);
+  }; */
+
 
   const handleClose = (event, reason) => {
     if (reason === 'clickaway') {
@@ -81,11 +86,6 @@ export default function Orders() {
     }
 
     setOpen(false);
-  };
-
-
-  const handleClickOpenAlert = () => {
-    setOpenAlert(true);
   };
 
   const handleCloseAlert = () => {

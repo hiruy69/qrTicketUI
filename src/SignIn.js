@@ -13,6 +13,8 @@ import Typography from '@mui/material/Typography';
 import Container from '@mui/material/Container';
 import { createTheme, ThemeProvider } from '@mui/material/styles';
 
+import { Navigate } from 'react-router-dom';
+
 function Copyright(props) {
   return (
     <Typography variant="body2" color="text.secondary" align="center" {...props}>
@@ -29,17 +31,21 @@ function Copyright(props) {
 const theme = createTheme();
 
 export default function SignIn() {
+  const [logedIn,setlogedIn] = React.useState(false)
   const handleSubmit = (event) => {
     event.preventDefault();
     const data = new FormData(event.currentTarget);
     // eslint-disable-next-line no-console
-    console.log({
-      email: data.get('email'),
+    const user = {
+      username: data.get('username'),
       password: data.get('password'),
-    });
+    }
+    console.log(user);
+    setlogedIn(true)
   };
 
   return (
+    logedIn ? <Navigate to="/home" replace /> :
     <ThemeProvider theme={theme}>
       <Container component="main" maxWidth="xs">
         <CssBaseline />
@@ -62,9 +68,9 @@ export default function SignIn() {
               margin="normal"
               required
               fullWidth
-              id="email"
-              label="Email Address"
-              name="email"
+              id="username"
+              label="Username"
+              name="username"
               autoComplete="email"
               autoFocus
             />
