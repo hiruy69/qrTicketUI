@@ -33,9 +33,12 @@ const theme = createTheme();
 
 export default function SignIn() {
   const [logedIn,setlogedIn] = React.useState(false)
-  if(localStorage.getItem('access_token')){
-    //setlogedIn(true)
-  }
+  
+  React.useEffect(()=>{
+    if(localStorage.getItem('access_token')){
+      setlogedIn(true)
+    }
+  },[logedIn])
   const handleSubmit = (event) => {
     event.preventDefault();
     const data = new FormData(event.currentTarget);
