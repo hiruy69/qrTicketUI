@@ -12,9 +12,15 @@ import ContentCopyIcon from '@mui/icons-material/ContentCopy';
 import CopyToClipboard from 'react-copy-to-clipboard'
 import AlertDialogSlide from './AlertDialogSlide';
 import CustomizedSnackbars from './CustomizedSnackbars';
-import instance from './axiosConfig'
+//import instance from './axiosConfig'
+import axios from 'axios';
 import moment from 'moment'
-
+const instance = axios.create({
+  // .. where we make our configurations
+      baseURL: 'https://qr-c0de-server.herokuapp.com/'
+  });
+  
+  
 
 
 
@@ -25,12 +31,21 @@ function preventDefault(event) {
 }
 
 export default function Orders() {
+
+  const TOKEN = localStorage.getItem('access_token')
+  // Where you would set stuff like your 'Authorization' header, etc ...
+  instance.defaults.headers.common['x-access-token'] = TOKEN;
+  instance.defaults.headers.common['Authorization'] = TOKEN;
+  // Also add/ configure interceptors && all the other cool stuff
+  instance.defaults.headers.post['Content-Type'] = 'application/json';
+
+
   const [open, setOpen] = React.useState(false);
   const [title, setTitle] = React.useState('');
   const [message, setMessage] = React.useState('');
   const [severity, setSeverity] = React.useState('info');
   const [openAlert, setOpenAlert] = React.useState(false)
-
+  
   const [price, setPrice] = React.useState(200)
   const [name, setName] = React.useState('')
   const [phone, setPhone] = React.useState('')
@@ -41,6 +56,7 @@ export default function Orders() {
   const baseURL = window.location.origin
 
   const getTickest = ()=>{
+    console.log(localStorage.getItem('access_token'))
     instance.post('ticketspg',{id:1}).then(res=>
       {
         setTickets(res.data.ticket.data)
@@ -52,7 +68,7 @@ export default function Orders() {
   React.useEffect(()=>{
     
     getTickest()
-  })
+  },[openAlert])
 
 
   const handleClose = () => {
