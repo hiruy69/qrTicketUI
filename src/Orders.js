@@ -37,7 +37,7 @@ export default function Orders() {
 
   const [tickets, setTickets] = React.useState([])
   const [page, setPage] = React.useState(1)
-
+  
   const baseURL = window.location.origin
 
   const getTickest = ()=>{
@@ -48,10 +48,11 @@ export default function Orders() {
       }
       ).catch(err=>console.log(err))
   }
-
+  setPage(1)
   React.useEffect(()=>{
+    
     getTickest()
-  },[])
+  })
 
 
   const handleClose = () => {

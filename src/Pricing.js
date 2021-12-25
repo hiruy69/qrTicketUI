@@ -83,7 +83,7 @@ function PricingContent() {
 
   React.useEffect(()=>{
       getTicket()
-  },[])
+  })
 
   
 
