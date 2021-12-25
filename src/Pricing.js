@@ -1,5 +1,5 @@
 import * as React from 'react';
-import AppBar from '@mui/material/AppBar';
+//import AppBar from '@mui/material/AppBar';
 import Box from '@mui/material/Box';
 import Button from '@mui/material/Button';
 import Card from '@mui/material/Card';
@@ -9,28 +9,17 @@ import CardHeader from '@mui/material/CardHeader';
 import CssBaseline from '@mui/material/CssBaseline';
 import Grid from '@mui/material/Grid';
 import StarIcon from '@mui/icons-material/StarBorder';
-import Toolbar from '@mui/material/Toolbar';
+//import Toolbar from '@mui/material/Toolbar';
 import Typography from '@mui/material/Typography';
 import Link from '@mui/material/Link';
 import GlobalStyles from '@mui/material/GlobalStyles';
 import Container from '@mui/material/Container';
 
 import QRCode from 'qrcode';
-import moment from 'moment';
+//import moment from 'moment';
 import { useParams } from "react-router-dom";
+import instance from './axiosConfig';
 
-function Copyright(props) {
-  return (
-    <Typography variant="body2" color="text.secondary" align="center" {...props}>
-      {'Copyright © '}
-      <Link color="inherit" href="https://mui.com/">
-        Your Website
-      </Link>{' '}
-      {new Date().getFullYear()}
-      {'.'}
-    </Typography>
-  );
-}
 
 const tiers = [
   
@@ -58,6 +47,8 @@ function PricingContent() {
 
   const [imageUrl, setImageUrl] = React.useState(ppp);
   const { id } = useParams();
+  const [text, setText] = React.useState('Fake Ticket');
+  const [TicketDetail, setTicketDetail] = React.useState({});
 
   const opts = {
     errorCorrectionLevel: 'Q',
@@ -66,6 +57,35 @@ function PricingContent() {
     margin: 1,
     
   }
+  const generateQrCode = async () => {
+    try {
+          //setText(moment())
+          //const now = moment().format('HH:mm:ss');
+          //const news = JSON.stringify({'h':600,'m':800,s:'67'})
+          const response = await QRCode.toDataURL(text,opts);
+          setImageUrl(response);
+    }catch (error) {
+      console.log(error);
+    }
+  }
+  generateQrCode()
+  const getTicket = ()=>{
+    const ticket = {id:id,scaned_status:false}
+    instance.post('ticket',JSON.stringify(ticket)).then(res=>
+      {
+        if(res.data.ticket){
+          setText(res.data.ticket[0].id)
+          setTicketDetail(res.data.ticket[0])
+        } 
+      }
+      ).catch(err=>console.log(err))
+  }
+
+  React.useEffect(()=>{
+      getTicket()
+  },[])
+
+  
 
   function Copyright(props) {
     return (
@@ -80,18 +100,8 @@ function PricingContent() {
     );
   }
   
-  const generateQrCode = async () => {
-    try {
-          //setText(moment())
-          const now = moment().format('HH:mm:ss');
-          //const news = JSON.stringify({'h':600,'m':800,s:'67'})
-          const response = await QRCode.toDataURL(id,opts);
-          setImageUrl(response);
-    }catch (error) {
-      console.log(error);
-    }
-  }
-  generateQrCode()
+  
+ 
   return (
     <React.Fragment>
       <GlobalStyles styles={{ ul: { margin: 30, padding: 0, listStyle: 'none' } }} />
@@ -110,7 +120,7 @@ function PricingContent() {
             >
               <Card>
                 <CardHeader
-                  title={tier.title + id}
+                  title={`Owner: ${TicketDetail.ticket_owner ? TicketDetail.ticket_owner : 'Fake Ticket'}` }
                   subheader={tier.subheader}
                   titleTypographyProps={{ align: 'center' }}
                   action={tier.title === 'Pro' ? <StarIcon /> : null}

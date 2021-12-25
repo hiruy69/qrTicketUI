@@ -6,7 +6,7 @@ import TextField from '@mui/material/TextField';
 import FormControlLabel from '@mui/material/FormControlLabel';
 import Checkbox from '@mui/material/Checkbox';
 import Link from '@mui/material/Link';
-import Grid from '@mui/material/Grid';
+//import Grid from '@mui/material/Grid';
 import Box from '@mui/material/Box';
 import LockOutlinedIcon from '@mui/icons-material/LockOutlined';
 import Typography from '@mui/material/Typography';
@@ -14,13 +14,14 @@ import Container from '@mui/material/Container';
 import { createTheme, ThemeProvider } from '@mui/material/styles';
 
 import { Navigate } from 'react-router-dom';
+import instance from './axiosConfig';
 
 function Copyright(props) {
   return (
     <Typography variant="body2" color="text.secondary" align="center" {...props}>
       {'Copyright © '}
-      <Link color="inherit" href="https://mui.com/">
-        Your Website
+      <Link color="inherit" href="https://hiruytamiru.tk/">
+        hiruytamiru.tk
       </Link>{' '}
       {new Date().getFullYear()}
       {'.'}
@@ -32,6 +33,9 @@ const theme = createTheme();
 
 export default function SignIn() {
   const [logedIn,setlogedIn] = React.useState(false)
+  if(localStorage.getItem('access_token')){
+    //setlogedIn(true)
+  }
   const handleSubmit = (event) => {
     event.preventDefault();
     const data = new FormData(event.currentTarget);
@@ -40,8 +44,13 @@ export default function SignIn() {
       username: data.get('username'),
       password: data.get('password'),
     }
-    console.log(user);
-    setlogedIn(true)
+    instance.post('login',user).then(res=>
+      {
+        const access_token = res.data.access_token
+        localStorage.setItem('access_token',access_token) 
+        setlogedIn(true)
+      }
+      ).catch(err=>console.log(err))
   };
 
   return (

@@ -1,51 +1,48 @@
-import React, {useState, useRef} from 'react';
-import {Container, Card, CardContent,  Grid, TextField, Button} from '@mui/material';
+import React from 'react';
+//import {Container, Card, CardContent,  Grid, TextField, Button} from '@mui/material';
 //import {makeStyles,} from '@mui/material/';
-import QRCode from 'qrcode';
-import QrReader from 'react-qr-reader';
+//import QRCode from 'qrcode';
+//import QrReader from 'react-qr-reader';
 //import QRScan from 'qrscan';
-import ReactiveQR from "reactive-qr";
+//import ReactiveQR from "reactive-qr";
 //import QrCodeScanner from '@sensorfactdev/qr-code-scanner';
-import BarcodeScannerComponent from "react-qr-barcode-scanner";
+//import BarcodeScannerComponent from "react-qr-barcode-scanner";
 import SignIn from './SignIn';
-import Orders from './Orders';
+//import Orders from './Orders';
 import Pricing from './Pricing';
 import ScanTicket from './ScanTicket'
 import Dashboard from './Dashboard'
 import {RequireAuth} from './RequireAuth'
-import { Navigate } from 'react-router-dom'
+//import { Navigate } from 'react-router-dom'
 import  Main  from "./Main";
 
 import {
   BrowserRouter as Router,
   Routes,
   Route,
-  Link,
-  useRouteMatch,
-  useParams
 } from "react-router-dom";
-import { SickOutlined } from '@mui/icons-material';
+//import { SickOutlined } from '@mui/icons-material';
 
-import  { Redirect } from 'react-router-dom'
+//import  { Redirect } from 'react-router-dom'
 
 
-function App(props) { 
-  const [text, setText] = useState('');
+function App() { 
+/*   const [text, setText] = useState('');
   const [imageUrl, setImageUrl] = useState('');
   const [scanResultFile, setScanResultFile] = useState('');
   const [scanResultWebCam, setScanResultWebCam] =  useState('');
   //const classes = useStyles();
-  const qrRef = useRef(null);
+  const qrRef = useRef(null); */
 
-  const rememberMe = localStorage.getItem('access_token')
+  /* const rememberMe = localStorage.getItem('access_token')
 
-  const [data, setData] = React.useState("Not Found");
+  const [data, setData] = React.useState("Not Found"); */
 
   //const navigate = useNavigate();
 
   
   
-
+/* 
   const handleScanResult = result => {
     console.log(result);
   }
@@ -75,16 +72,15 @@ function App(props) {
     if (result){
         setScanResultWebCam(result);
     }
-   }
+   } */
   return (
     <Router>
       <Routes>
-      
-      <Route exact path="/" element={
-            <RequireAuth>
-               <Main />
-            </RequireAuth>
-          }>
+         <Route exact path="/" element={
+              <RequireAuth>
+                <Main />
+              </RequireAuth>
+            }>
             </Route>
           <Route path="/scanticket" element={
             <RequireAuth>
@@ -111,12 +107,17 @@ function App(props) {
           }/>
         </Routes>
         
-        {rememberMe && <Navigate to='/login'  /> }
+        
     </Router>
   );
 }
 
-/*  {rememberMe ?  <Navigate to="/home" replace /> : <Navigate to="/home" replace />}
+/*  {rememberMe && <Navigate to='/login'  /> }
+       
+
+
+
+{rememberMe ?  <Navigate to="/home" replace /> : <Navigate to="/home" replace />}
 const useStyles = makeStyles((theme) => ({
     conatiner: {
       marginTop: 10

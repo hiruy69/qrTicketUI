@@ -5,8 +5,8 @@ import { Navigate } from 'react-router-dom';
 
 function Main() { 
 
-    const rememberMe = localStorage.getItem('access_token')
-
+    const rememberMe = true //localStorage.getItem('access_token')
+    console.log('Main',rememberMe)
     
  
   return (

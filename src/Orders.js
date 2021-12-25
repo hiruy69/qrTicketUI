@@ -6,55 +6,19 @@ import TableCell from '@mui/material/TableCell';
 import TableHead from '@mui/material/TableHead';
 import TableRow from '@mui/material/TableRow';
 import Title from './Title';
-import {Select,MenuItem,  Grid, TextField, Button ,Modal, Box,Tooltip} from '@mui/material';
+import {Select,MenuItem,  Grid, TextField, Button } from '@mui/material';
 
 import ContentCopyIcon from '@mui/icons-material/ContentCopy';
 import CopyToClipboard from 'react-copy-to-clipboard'
 import AlertDialogSlide from './AlertDialogSlide';
 import CustomizedSnackbars from './CustomizedSnackbars';
-// Generate Order Data
-function createData(id, date, name, shipTo, paymentMethod, amount) {
-  return { id, date, name, shipTo, paymentMethod, amount };
-}
+import instance from './axiosConfig'
+import moment from 'moment'
 
 
 
 
-const rows = [
-  createData(
-    0,
-    '16 Mar, 2019',
-    'Elvis Presley',
-    'Tupelo, MS',
-    'VISA ⠀•••• 3719',
-    312.44,
-  ),
-  createData(
-    1,
-    '16 Mar, 2019',
-    'Paul McCartney',
-    'London, UK',
-    'VISA ⠀•••• 2574',
-    866.99,
-  ),
-  createData(2, '16 Mar, 2019', 'Tom Scholz', 'Boston, MA', 'MC ⠀•••• 1253', 100.81),
-  createData(
-    3,
-    '16 Mar, 2019',
-    'Michael Jackson',
-    'Gary, IN',
-    'AMEX ⠀•••• 2000',
-    654.39,
-  ),
-  createData(
-    4,
-    '15 Mar, 2019',
-    'Bruce Springsteen',
-    'Long Branch, NJ',
-    'VISA ⠀•••• 5919',
-    212.79,
-  ),
-];
+
 
 function preventDefault(event) {
   event.preventDefault();
@@ -71,24 +35,45 @@ export default function Orders() {
   const [name, setName] = React.useState('')
   const [phone, setPhone] = React.useState('')
 
-/*   const handleClick = () => {
-    setOpen(true);
-  };
+  const [tickets, setTickets] = React.useState([])
+  const [page, setPage] = React.useState(1)
 
-  const handleClickOpenAlert = () => {
-    setOpenAlert(true);
-  }; */
+  const baseURL = window.location.origin
+
+  const getTickest = ()=>{
+    instance.post('ticketspg',{id:page}).then(res=>
+      {
+        setTickets(res.data.ticket.data)
+        console.log(res.data.ticket.data)
+      }
+      ).catch(err=>console.log(err))
+  }
+
+  React.useEffect(()=>{
+    getTickest()
+  },[])
 
 
-  const handleClose = (event, reason) => {
-    if (reason === 'clickaway') {
-      return;
-    }
-
+  const handleClose = () => {
+    
     setOpen(false);
   };
 
-  const handleCloseAlert = () => {
+  const handleCloseAlert = (event) => {
+    const ticket = {price:price  ,ticket_owner:name ,address:phone }
+    instance.post('createticket',JSON.stringify(ticket)).then(res=>
+      {
+        setSeverity('success');
+        setMessage('Ticket Generated ')
+        setOpen(true);
+        getTickest()
+      }
+      ).catch(err=>{
+        setSeverity('error');
+        setMessage('Somthing Went wrong!! Try again')
+        setOpen(true);
+      })
+
     setOpenAlert(false);
   };
 
@@ -167,14 +152,14 @@ export default function Orders() {
           </TableRow>
         </TableHead>
         <TableBody>
-          {rows.map((row,id) => (
+          {tickets && tickets.map((row,id) => (
             <TableRow key={row.id}>
-              <TableCell>{row.date}</TableCell>
-              <TableCell>{row.name}</TableCell>
-              <TableCell>{row.shipTo}</TableCell>
-              <TableCell>{row.paymentMethod}</TableCell>
+              <TableCell>{moment(row.created_at).format('MMMM Do YYYY, h:mm:ss a')}</TableCell>
+              <TableCell>{row.ticket_owner ? row.ticket_owner:'No Name'}</TableCell>
+              <TableCell>{row.price}</TableCell>
+              <TableCell>{row.scaned_status ? 'Closed':'Open'}</TableCell>
               <TableCell>
-              <CopyToClipboard text={`https://firebase.google.com/products/cloud-messaging/${id}`} >
+              <CopyToClipboard text={`${baseURL}/tickets/${row.id}`} >
                 <Button onClick={copyLink}><ContentCopyIcon /></Button>
               </CopyToClipboard>
               </TableCell>
