@@ -47,7 +47,7 @@ function PricingContent() {
 
   const [imageUrl, setImageUrl] = React.useState(ppp);
   const { id } = useParams();
-  const [text, setText] = React.useState('Fake Ticket');
+  const [text, setText] = React.useState('Expired or Fake Ticket');
   const [TicketDetail, setTicketDetail] = React.useState({});
 
   const opts = {
@@ -120,7 +120,7 @@ function PricingContent() {
             >
               <Card>
                 <CardHeader
-                  title={`Owner: ${TicketDetail.ticket_owner ? TicketDetail.ticket_owner : 'Fake Ticket'}` }
+                  title={`${TicketDetail.ticket_owner ? TicketDetail.ticket_owner  : 'Expired or Fake Ticket'}` }
                   subheader={tier.subheader}
                   titleTypographyProps={{ align: 'center' }}
                   action={tier.title === 'Pro' ? <StarIcon /> : null}

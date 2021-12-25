@@ -36,19 +36,19 @@ export default function Orders() {
   const [phone, setPhone] = React.useState('')
 
   const [tickets, setTickets] = React.useState([])
-  const [page, setPage] = React.useState(1)
+  //const [page, setPage] = React.useState(1)
   
   const baseURL = window.location.origin
 
   const getTickest = ()=>{
-    instance.post('ticketspg',{id:page}).then(res=>
+    instance.post('ticketspg',{id:1}).then(res=>
       {
         setTickets(res.data.ticket.data)
         console.log(res.data.ticket.data)
       }
       ).catch(err=>console.log(err))
   }
-  setPage(1)
+
   React.useEffect(()=>{
     
     getTickest()
