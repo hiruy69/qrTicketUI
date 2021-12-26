@@ -10,6 +10,11 @@ import IconButton from '@mui/material/IconButton';
 import instance from './axiosConfig';
 
 
+//import CheckIcon from '@mui/icons-material/Check';
+import CheckCircleOutlineIcon from '@mui/icons-material/CheckCircleOutline';
+import ErrorOutlineIcon from '@mui/icons-material/ErrorOutline';
+
+
 import Backdrop from '@mui/material/Backdrop';
 import CircularProgress from '@mui/material/CircularProgress';
 import Typography from '@mui/material/Typography';
@@ -21,6 +26,7 @@ function ScanTicket() {
   const [text, setText] =  useState('Expired or Fake Ticket');
   const [open, setOpen] = React.useState(false);
   const [isScan, setIsScan] = React.useState(false);
+  const [isScanError, setIsScanError] = React.useState(true);
   console.log(scanResultWebCam)
   const handleClose = () => {
     setOpen(false);
@@ -38,6 +44,10 @@ function ScanTicket() {
     pt: 2,
     px: 4,
     pb: 3,
+    display:'flex',
+    flexDirection:'column',
+    justifyContent:'center',
+    alignItems: 'center'
   };
  
   const toggleDrawer = () => {
@@ -48,6 +58,7 @@ function ScanTicket() {
     
     instance.post('ticket',JSON.stringify({id:result,scaned_status:false})).then(res=>
       {
+        console.log(res.data.ticket)
         if(res.data.ticket.length){
           const ticket = {id:res.data.ticket[0].id,scaned_status:true}
           const tikcetDetail = res.data.ticket[0] || {}
@@ -57,17 +68,21 @@ function ScanTicket() {
                 //console.log(res.data,'updateticket',tikcetDetail)
                 setIsScan(false);
                 setOpen(true); 
-                setText('Ticket Owner :'+tikcetDetail.ticket_owner+' Phone: '+tikcetDetail.address)
+                setIsScanError(false)
+                setText('Ticket Owner :'+tikcetDetail.ticket_owner+'\n  Phone: '+tikcetDetail.address)
               }  
             }
             ).catch(err=>console.log(err))
         }else{
+          setIsScanError(true)
+          setText('Expired or Fake Ticket')
           setIsScan(false);
           setOpen(true);
         } 
       }
       ).catch(err=>{
         console.log(err)
+        setIsScanError(true)
         setText('Expired or Fake Ticket')
         setIsScan(false);
         setOpen(true);
@@ -88,6 +103,7 @@ function ScanTicket() {
    }
   return (
     < > 
+
         <Backdrop
             sx={{ display:'flex',flexDirection:'column',justifyContent:'center', color: '#fff', zIndex: (theme) => theme.zIndex.drawer + 1 }}
             open={isScan}
@@ -136,7 +152,9 @@ function ScanTicket() {
               <p id="child-modal-description">
                 {text}
               </p>
-              <Button onClick={handleClose}>Close</Button>
+             { isScanError ? <ErrorOutlineIcon fontSize="large" color="error" sx={{ fontSize: 50 }}/>
+               : <CheckCircleOutlineIcon fontSize="large"  color="success" sx={{ fontSize: 50 }}/> }
+              <Button variant="contained" color="primary" onClick={handleClose}>Close</Button>
             </Box>
           </Modal>
     </>
