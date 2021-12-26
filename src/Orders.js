@@ -1,10 +1,4 @@
 import * as React from 'react';
-import Link from '@mui/material/Link';
-import Table from '@mui/material/Table';
-import TableBody from '@mui/material/TableBody';
-import TableCell from '@mui/material/TableCell';
-import TableHead from '@mui/material/TableHead';
-import TableRow from '@mui/material/TableRow';
 import Title from './Title';
 import {Select,MenuItem,  Grid, TextField, Button } from '@mui/material';
 
@@ -13,6 +7,20 @@ import CopyToClipboard from 'react-copy-to-clipboard'
 import AlertDialogSlide from './AlertDialogSlide';
 import CustomizedSnackbars from './CustomizedSnackbars';
 //import instance from './axiosConfig'
+
+import Card from '@mui/material/Card';
+//import CardActions from '@mui/material/CardActions';
+import CardContent from '@mui/material/CardContent';
+import Typography from '@mui/material/Typography';
+
+
+import Pagination from '@mui/material/Pagination';
+import Stack from '@mui/material/Stack';
+
+import InputBase from '@mui/material/InputBase';
+import SearchIcon from '@mui/icons-material/Search';
+import IconButton from '@mui/material/IconButton';
+
 import axios from 'axios';
 import moment from 'moment'
 const instance = axios.create({
@@ -21,14 +29,6 @@ const instance = axios.create({
   });
   
   
-
-
-
-
-
-function preventDefault(event) {
-  event.preventDefault();
-}
 
 export default function Orders() {
 
@@ -76,6 +76,10 @@ export default function Orders() {
     setOpen(false);
   };
 
+  const handleCancelAlert = () => {
+    setOpenAlert(false);
+  };
+
   const handleCloseAlert = (event) => {
     const ticket = {price:price  ,ticket_owner:name ,address:phone }
     instance.post('createticket',JSON.stringify(ticket)).then(res=>
@@ -102,7 +106,7 @@ export default function Orders() {
 
   const generateTikcet = (e)=>{
       setTitle('New Ticket');
-      setMessage('Are you sure you want to create New Ticket?')
+      setMessage(`'Are you sure you want to create a New Ticket for ${name} with price ${price}?'`)
       setOpenAlert(true);
   }
 
@@ -124,7 +128,7 @@ export default function Orders() {
     <React.Fragment>
       
       
-      <AlertDialogSlide handleClose={handleCloseAlert} open={openAlert} title={title} message={message}/>
+      <AlertDialogSlide handleCancelAlert={handleCancelAlert} handleClose={handleCloseAlert} open={openAlert} title={title} message={message}/>
 
       <CustomizedSnackbars handleClose={handleClose} open={open} severity={severity} message={message} />
         
@@ -156,9 +160,94 @@ export default function Orders() {
             color="primary" onClick={generateTikcet} >Generate Ticket</Button>               
           </Grid>
       </Grid>
+
+      <Grid item display={'flex'} justifyContent={'space-between'}>
+        <Title>Sold Tickets</Title>  
+        <Title>{tickets.length}</Title>
+      </Grid>
+
+      <Grid item display={'flex'} justifyContent={'space-between'}>
+        <InputBase
+          sx={{ ml: 1, flex: 1 }}
+          placeholder="Search Ticket"
+          inputProps={{ 'aria-label': 'Search Ticket' }}
+        />
+        <IconButton type="submit" sx={{ p: '10px' }} aria-label="search">
+          <SearchIcon />
+        </IconButton>
+      </Grid>
       
-      <Title>Sold Tickets</Title>
-      <Table size="small">
+
+
+      <Grid alignItems="center" spacing={2}>
+      {tickets && tickets.map((row,id) => (
+            <Card sx={{ minWidth: 275 , marginBottom: 2}} key={row.id}>
+            <CardContent>
+              <Grid item display={'flex'} justifyContent={'space-between'}>
+              <div>
+                <Typography color="text.secondary" gutterBottom>
+                Date
+                </Typography>
+                <Typography >
+                {moment(row.created_at).format('MMM DD YYYY, h:mm a')} 
+                </Typography>
+              </div>
+              <div>
+                <Typography color="text.secondary" gutterBottom>
+                Name
+                </Typography>
+                <Typography >
+                {row.ticket_owner ? row.ticket_owner:'No Name'}
+                </Typography>
+              </div>
+              </Grid>
+              <Grid item display={'flex'} justifyContent={'space-between'}>
+              <div>
+                <Typography color="text.secondary" gutterBottom>
+                  Price
+                </Typography>
+                <Typography >
+                {row.price}
+                </Typography>
+              </div>
+              <div>
+                <Typography color="text.secondary" gutterBottom>
+                  Status
+                </Typography>
+                <Typography >
+                {row.scaned_status ? 'Closed':'Open'}
+                </Typography>
+              </div>   
+              <div>
+                <Typography color="text.secondary" gutterBottom>
+                  Link
+                </Typography>
+                <CopyToClipboard text={`${baseURL}/tickets/${row.id}`} >
+                      <Button onClick={copyLink}><ContentCopyIcon /></Button>
+              </CopyToClipboard>
+              </div>     
+              </Grid>
+            </CardContent>
+          </Card>
+        ))}
+      </Grid>
+      
+
+     
+      
+      <Stack spacing={2} >
+      <Pagination count={5} variant="outlined" color="primary" onClick={(e)=>console.log(e.target.dataset) }/>
+    </Stack>
+    </React.Fragment>
+  );
+}
+
+
+/**
+ * <Link color="primary" href="#" onClick={preventDefault} sx={{ mt: 3 }}>
+        See more orders
+      </Link>
+ *  <Table sx={{ minWidth: 650 }} size="small">
         <TableHead>
           <TableRow>
             <TableCell>Date</TableCell>
@@ -185,15 +274,12 @@ export default function Orders() {
           ))}
         </TableBody>
       </Table>
-      <Link color="primary" href="#" onClick={preventDefault} sx={{ mt: 3 }}>
-        See more orders
-      </Link>
-    </React.Fragment>
-  );
-}
-
-
-/**
+ * 
+ * 
+ * 
+ * 
+ * 
+ * 
  *   const style = {
     position: 'absolute',
     top: '50%',
@@ -232,3 +318,10 @@ export default function Orders() {
   </Box>
 </Modal>
  */
+
+
+
+
+
+
+

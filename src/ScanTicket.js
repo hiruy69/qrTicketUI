@@ -8,12 +8,19 @@ import Button from '@mui/material/Button';
 import ChevronLeftIcon from '@mui/icons-material/ChevronLeft';
 import IconButton from '@mui/material/IconButton';
 import instance from './axiosConfig';
+
+
+import Backdrop from '@mui/material/Backdrop';
+import CircularProgress from '@mui/material/CircularProgress';
+import Typography from '@mui/material/Typography';
+import {NavLink} from 'react-router-dom';
 //import { Navigate } from 'react-router-dom'
 
 function ScanTicket() { 
   const [scanResultWebCam, setScanResultWebCam] =  useState('');
-  const [text, setText] =  useState('Fake Ticket');
+  const [text, setText] =  useState('Expired or Fake Ticket');
   const [open, setOpen] = React.useState(false);
+  const [isScan, setIsScan] = React.useState(false);
   console.log(scanResultWebCam)
   const handleClose = () => {
     setOpen(false);
@@ -38,38 +45,61 @@ function ScanTicket() {
   }
 
   function changeTikcetStatus(result){
+    
     instance.post('ticket',JSON.stringify({id:result,scaned_status:false})).then(res=>
       {
-        if(res.data.ticket){
+        if(res.data.ticket.length){
           const ticket = {id:res.data.ticket[0].id,scaned_status:true}
           const tikcetDetail = res.data.ticket[0] || {}
           instance.post('updateticket',JSON.stringify(ticket)).then(res=>
             {
               if(res.data){
                 //console.log(res.data,'updateticket',tikcetDetail)
+                setIsScan(false);
                 setOpen(true); 
                 setText('Ticket Owner :'+tikcetDetail.ticket_owner+' Phone: '+tikcetDetail.address)
               }  
             }
             ).catch(err=>console.log(err))
         }else{
+          setIsScan(false);
           setOpen(true);
         } 
       }
-      ).catch(err=>console.log(err))
+      ).catch(err=>{
+        console.log(err)
+        setText('Expired or Fake Ticket')
+        setIsScan(false);
+        setOpen(true);
+      })
+      
   }
   
   const handleErrorWebCam = (error) => {
     console.log(error);
   }
   const handleScanWebCam = (result) => {
-    if (result){
+    if (result && isScan === false){
         setScanResultWebCam(result);
         changeTikcetStatus(result)
+        setIsScan(true);
+
     }
    }
   return (
-    < >
+    < > 
+        <Backdrop
+            sx={{ display:'flex',flexDirection:'column',justifyContent:'center', color: '#fff', zIndex: (theme) => theme.zIndex.drawer + 1 }}
+            open={isScan}
+          >
+            <CircularProgress color="inherit"/>
+            <Typography color="inherit" gutterBottom>
+                  Scaning Please wait....
+            </Typography>
+
+            
+          </Backdrop>
+    
           <Card>
               <CardContent >{/** alignItems="center" align="center" justify="center" */}
                   <Grid  alignItems="center" align="center" justify="center" container spacing={2}>
@@ -85,10 +115,12 @@ function ScanTicket() {
                   </Grid>
               </CardContent>
                 
+                <NavLink to="/home"> 
                 <IconButton onClick={toggleDrawer}>
                 <ChevronLeftIcon />
                 Go Back
                 </IconButton>
+                </NavLink>
            
           </Card>
 
@@ -133,5 +165,6 @@ function ScanTicket() {
     }
 })); */
 export default ScanTicket;
+
 
 
