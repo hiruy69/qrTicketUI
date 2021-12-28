@@ -90,9 +90,7 @@ function App() {
             
           </Route>
           <Route path="/tickets/:id" element={
-            <RequireAuth>
                <Pricing />
-            </RequireAuth>
           }>
             
           </Route>
